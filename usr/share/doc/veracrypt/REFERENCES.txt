@@ -1,0 +1,46 @@
+#######################################
+# REFERENCE 1
+https://github.com/veracrypt/VeraCrypt
+Requirements for Building VeraCrypt for Linux and Mac OS X:
+
+    GNU Make
+    GNU C++ Compiler 4.0 or compatible
+    Apple Xcode (Mac OS X only)
+    YASM 1.3.0 or newer (Linux only, x86/x64 architecture only)
+    pkg-config
+    wxWidgets 3.0 shared library and header files installed or wxWidgets 3.0 library source code (available at https://www.wxwidgets.org)
+    FUSE library and header files (available at https://github.com/libfuse/libfuse and https://osxfuse.github.io/)
+
+Instructions for Building VeraCrypt for Linux and Mac OS X:
+
+    Change the current directory to the root of the VeraCrypt source code.
+
+    If you have no wxWidgets shared library installed, run the following command to configure the wxWidgets static library for VeraCrypt and to build it:
+
+    $ make WXSTATIC=1 WX_ROOT=/usr/src/wxWidgets wxbuild
+
+    The variable WX_ROOT must point to the location of the source code of the wxWidgets library. Output files will be placed in the './wxrelease/' directory.
+
+    To build VeraCrypt, run the following command:
+
+    $ make
+
+    or if you have no wxWidgets shared library installed:
+
+    $ make WXSTATIC=1
+
+    If successful, the VeraCrypt executable should be located in the directory 'Main'.
+
+By default, a universal executable supporting both graphical and text user interface (through the switch --text) is built. On Linux, a console-only executable, which requires no GUI library, can be built using the 'NOGUI' parameter:
+
+$ make NOGUI=1 WXSTATIC=1 WX_ROOT=/usr/src/wxWidgets wxbuild $ make NOGUI=1 WXSTATIC=1
+
+On MacOSX, building a console-only executable is not supported.
+
+III. FreeBSD
+
+FreeBSD is supported starting from version 11. The build requirements and instructions are the same as Linux except that gmake should be used instead of make.
+
+##############
+# REFERENCE 2
+https://github.com/veracrypt/VeraCrypt/releases
