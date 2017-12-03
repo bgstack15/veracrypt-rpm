@@ -48,7 +48,7 @@ mkdir -p ./Main/Setup/Linux/usr
 cp -pr ./Setup/Linux%{_prefix} %{buildroot}%{_datadir}/%{name}/app%{_prefix}
 popd
 # clean up the source
-rm -rf %{buildroot}%{_datadir}/%{name}/source/*
+find %{buildroot}%{_datadir}/%{name}/source/ -mindepth 1 ! -regex '.*\.patch' -exec /bin/rm -rf {} \; ||:
 
 %clean
 rm -rf %{buildroot}
@@ -110,6 +110,7 @@ exit 0
 /usr/share/veracrypt/inc/sha256sum.txt
 /usr/share/veracrypt/inc/veracrypt_ver.txt
 /usr/share/veracrypt/source
+/usr/share/veracrypt/source/VeraCrypt-1.22.fc26.patch
 
 %changelog
 * Sat Dec  2 2017 B Stack <bgstack15@gmail.com> 1.22-0

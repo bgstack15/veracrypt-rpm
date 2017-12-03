@@ -1,5 +1,6 @@
 #!/bin/sh
 # File: get-sources
+# WORKHERE: if all the dls fail, check the usr/share/${package}/source/ dir
 sha256sumfile="${rpmbuilddir}/SOURCES/${package}-${version}/usr/share/${package}/inc/sha256sum.txt"
 
 getsource() {
@@ -81,7 +82,9 @@ s/^\s*//;
 while read line;
 do
    destfile="${rpmbuilddir}/SOURCES/$( echo "${line}" | sed -r -e 's4^.*\/44;' )"
+#"${rpmbuilddir}/SOURCES/${package}-${version}/usr/share/${package}/inc/sha256sum.txt"
    getsource "${line}" "${destfile}"
+   echo "${destfile}" | grep -qiE "\.patch" && /bin/cp -pf "${destfile}" "${rpmbuilddir}/SOURCES/${package}-${version}/usr/share/${package}/source/"
 done < "${getthesefiles1}"
 
 popd 1>/dev/null 2>&1;
