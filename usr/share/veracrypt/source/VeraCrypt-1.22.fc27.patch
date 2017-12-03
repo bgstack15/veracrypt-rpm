@@ -1,0 +1,64 @@
+diff -Naur VeraCrypt-master/src/Common/Dlgcode.c VeraCrypt-fc27/src/Common/Dlgcode.c
+--- VeraCrypt-master/src/Common/Dlgcode.c	2017-11-29 11:27:39.000000000 -0500
++++ VeraCrypt-fc27/src/Common/Dlgcode.c	2017-12-02 16:56:57.484795574 -0500
+@@ -1280,7 +1280,7 @@
+ 			L"This software as a whole:\r\n"
+ 			L"Copyright \xA9 2013-2017 IDRIX. All rights reserved.\r\n\r\n"
+ 
+-			L"An IDRIX Release");
++			L"Patched for Fedora 27 for smith122.com");
+ 
+ 		return 1;
+ 
+diff -Naur VeraCrypt-master/src/Common/Tcdefs.h VeraCrypt-fc27/src/Common/Tcdefs.h
+--- VeraCrypt-master/src/Common/Tcdefs.h	2017-11-29 11:27:39.000000000 -0500
++++ VeraCrypt-fc27/src/Common/Tcdefs.h	2017-12-02 16:54:49.212682689 -0500
+@@ -55,7 +55,7 @@
+ #define TC_APP_NAME						"VeraCrypt"
+ 
+ // Version displayed to user 
+-#define VERSION_STRING					"1.22-BETA3"
++#define VERSION_STRING					"1.22-smith122"
+ 
+ // Version number to compare against driver
+ #define VERSION_NUM						0x0122
+@@ -383,11 +383,11 @@
+ #define TC_MAX_PATH		260	/* Includes the null terminator */
+ #endif
+ 
+-#define TC_STR_RELEASED_BY L"Released by IDRIX on " TC_STR_RELEASE_DATE
++#define TC_STR_RELEASED_BY L"Patched for smith122.com using IDRIX build " TC_STR_RELEASE_DATE
+ 
+ #define MAX_URL_LENGTH	2084 /* Internet Explorer limit. Includes the terminating null character. */
+ 
+-#define TC_HOMEPAGE L"https://www.idrix.fr/"
++#define TC_HOMEPAGE L"https://bgstack15.wordpress.com/"
+ #define TC_APPLINK L"https://www.veracrypt.fr"
+ 
+ enum
+diff -Naur VeraCrypt-master/src/Main/Forms/AboutDialog.cpp VeraCrypt-fc27/src/Main/Forms/AboutDialog.cpp
+--- VeraCrypt-master/src/Main/Forms/AboutDialog.cpp	2017-11-29 11:27:39.000000000 -0500
++++ VeraCrypt-fc27/src/Main/Forms/AboutDialog.cpp	2017-12-02 16:56:25.523269110 -0500
+@@ -72,6 +72,6 @@
+ 
+ 			L"This software uses wxWidgets library, which is copyright \xA9 1998-2011 Julian Smart, Robert Roebling et al.\n\n"
+ 
+-			L"An IDRIX Release");
++			L"Patched for Fedora 27 for smith122.com");
+ 	}
+ }
+diff -Naur VeraCrypt-master/src/Setup/Linux/veracrypt.desktop VeraCrypt-fc27/src/Setup/Linux/veracrypt.desktop
+--- VeraCrypt-master/src/Setup/Linux/veracrypt.desktop	2017-11-29 11:27:39.000000000 -0500
++++ VeraCrypt-fc27/src/Setup/Linux/veracrypt.desktop	2017-12-02 16:13:43.845073411 -0500
+@@ -2,9 +2,9 @@
+ Encoding=UTF-8
+ Name=VeraCrypt
+ GenericName=VeraCrypt
+-Comment=VeraCrypt
++Comment=Disk encryption with strong security based on TrueCrypt
+ Exec=/usr/bin/veracrypt
+ Icon=veracrypt
+ Terminal=false
+ Type=Application
+-Categories=Encryption;Encryption Tools;Utility;
++Categories=X-Encryption;X-Encryption-Tools;Utility;

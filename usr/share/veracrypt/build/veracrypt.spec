@@ -95,22 +95,23 @@ exit 0
 
 %files
 %dir /usr/share/veracrypt
-%dir /usr/share/veracrypt/build
 %dir /usr/share/veracrypt/inc
-%doc %attr(444, -, -) /usr/share/doc/veracrypt/REFERENCES.txt
-%doc %attr(444, -, -) /usr/share/doc/veracrypt/README.txt
-/usr/share/doc/veracrypt/version.txt
-/usr/share/veracrypt/doc
-/usr/share/veracrypt/build/get-files
-/usr/share/veracrypt/build/files-for-versioning.txt
-/usr/share/veracrypt/build/get-sources
-/usr/share/veracrypt/build/veracrypt.spec
-/usr/share/veracrypt/build/pack
-/usr/share/veracrypt/app
-/usr/share/veracrypt/inc/sha256sum.txt
-/usr/share/veracrypt/inc/veracrypt_ver.txt
+%dir /usr/share/veracrypt/build
 /usr/share/veracrypt/source
 /usr/share/veracrypt/source/VeraCrypt-1.22.fc26.patch
+/usr/share/veracrypt/source/VeraCrypt-1.22.fc27.patch
+/usr/share/veracrypt/inc/sha256sum.txt
+/usr/share/veracrypt/inc/veracrypt_ver.txt
+/usr/share/veracrypt/build/pack
+/usr/share/veracrypt/build/files-for-versioning.txt
+/usr/share/veracrypt/build/veracrypt.spec
+/usr/share/veracrypt/build/get-files
+/usr/share/veracrypt/build/get-sources
+/usr/share/veracrypt/app
+/usr/share/veracrypt/doc
+/usr/share/doc/veracrypt/version.txt
+%doc %attr(444, -, -) /usr/share/doc/veracrypt/README.txt
+%doc %attr(444, -, -) /usr/share/doc/veracrypt/REFERENCES.txt
 
 %changelog
 * Sat Dec  2 2017 B Stack <bgstack15@gmail.com> 1.22-0
