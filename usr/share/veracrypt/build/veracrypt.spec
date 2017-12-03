@@ -1,6 +1,6 @@
 %global pname VeraCrypt
 Name:		veracrypt
-Version:	1.21
+Version:	1.22
 Release:	0%{?dist}
 Summary:	Disk encryption with strong security based on TrueCrypt
 
@@ -8,24 +8,21 @@ Group:	Applications/File
 License:	GPL 3.0 
 URL:		http://bgstack15.wordpress.com/
 Source0:	veracrypt.tgz
-#Source1: https://github.com/veracrypt/VeraCrypt/archive/VeraCrypt_%{version}.tar.gz
-Source1:	https://albion320.no-ip.biz/smith122/repo/patch/%{name}/%{pname}_%{version}_Source.tar.gz
-Source2:	https://albion320.no-ip.biz/smith122/repo/patch/%{name}/%{pname}_%{version}%{?dist}.patch
+#Source1: https://github.com/veracrypt/VeraCrypt/archive/master.tar.gz
+Source1:	https://albion320.no-ip.biz/smith122/repo/patch/%{name}/%{pname}-%{version}.tar.gz
+Source2:	https://albion320.no-ip.biz/smith122/repo/patch/%{name}/%{pname}-%{version}%{?dist}.patch
 
 Packager:	Bgstack15 <bgstack15@gmail.com>
 Buildarch:	x86_64
-BuildRequires: compat-wxGTK3-gtk2-devel
 BuildRequires: gcc-c++
-BuildRequires: gtk3-devel
-BuildRequires: gtk+-devel
 BuildRequires: wxGTK3-devel
-BuildRequires: wxGTK-devel
 BuildRequires: yasm
 BuildRequires: fuse-devel
-#Requires:	
+BuildRequires: /usr/bin/7za
+Requires:	wxGTK3
 
 %description
-FreeFileSync is a fantastic, cross-platform FOSS tool for managing synchronized directories.It is useful for GUI environments and for detailed file comparisons. Rsync is recommended for automated solutions and in headless environments.
+VeraCrypt is a free open source disk encryption software for Windows, Mac OSX and Linux. Brought to you by IDRIX (https://www.idrix.fr) and based on TrueCrypt 7.1a.
 
 #%global debug_package %{nil}
 
@@ -36,129 +33,84 @@ cd %{name}-%{version}/%{_datadir}/%{name}/source
 tar -zxf %{SOURCE1}
 cp %{SOURCE2} .
 patch -p0 < %{SOURCE2}
-sed -i -r -e 's4^(prefix\s*)=\s*%{_prefix}.*4\1= %{_datadir}/%{name}/app%{_prefix}4;' %{pname}/src/Makefile
-#cp -p Changelog.txt FreeFileSync/Build/Changelog.txt # WORKHERE cannot remember what this does
 
 %build
-%make_build -C %{name}-%{version}/%{_datadir}/%{name}/source/%{pname}/src
+%make_build -C %{name}-%{version}/%{_datadir}/%{name}/source/%{pname}-master/src
 
 %install
 rm -rf %{buildroot}
 rsync -av ./%{name}-%{version}/ %{buildroot}/ --exclude='**/.*.swp' --exclude='**/.git'
-%make_install -C %{name}-%{version}/%{_datadir}/%{name}/source/%{pname}/src
+# this package really wants to work in PWD, because a make_install -C fails.
+pushd %{name}-%{version}/%{_datadir}/%{name}/source/%{pname}-master/src
+# make install fails without this directory despite that the package installs to Setup/Linux/usr
+mkdir -p ./Main/Setup/Linux/usr
+%make_install
+cp -pr ./Setup/Linux%{_prefix} %{buildroot}%{_datadir}/%{name}/app%{_prefix}
+popd
+# clean up the source
+rm -rf %{buildroot}%{_datadir}/%{name}/source/*
 
 %clean
-#rm -rf %{buildroot}
+rm -rf %{buildroot}
 exit 0
 
 %post
-# rpm post 2017-02-13
-:
-## Initialize config file
-#ini_source=%{_datarootdir}/%{name}/inc/GlobalSettings.xml
-#ini_dest=%{_datarootdir}/%{name}/app%{_datarootdir}/FreeFileSync/GlobalSettings.xml
-#if test -f "${ini_source}";
-#then
-#   /bin/cp -p "${ini_source}" "${ini_dest}" 2>/dev/null && { echo "Initialized the config file."; }
-#fi
-#chmod 0666 "${ini_source}" "${ini_dest}" 2>/dev/null
+# rpm post 2017-12-02
 
-## Deploy icons
-#which xdg-icon-resource 1>/dev/null 2>&1 && {
+# Deploy app symlinks
+ln -s %{_datadir}/%{name}/app%{_bindir}/%{name} %{_bindir}/%{name} ||:
 
-#   # Deploy default application icons
-#   for theme in hicolor HighContrast;
-#   do
+# Deploy icons
+ln -s %{_datadir}/%{name}/app%{_datadir}/pixmaps/%{name}.xpm %{_datadir}/pixmaps/%{name}.xpm ||:
 
-#      # Deploy scalable application icons
-#      cp -p %{_datarootdir}/%{name}/inc/icons/%{name}-${theme}-scalable.svg %{_datarootdir}/icons/${theme}/scalable/apps/freefilesync.svg
-
-#      # Deploy size application icons
-#      for size in 64 128;
-#      do
-#         xdg-icon-resource install --context apps --size "${size}" --theme "${theme}" --novendor --noupdate %{_datarootdir}/%{name}/inc/icons/%{name}-${theme}-${size}.png freefilesync &
-#      done
-#   done
-
-#   # Deploy custom application icons
-#   # none
-
-#   # Update icon caches
-#   xdg-icon-resource forceupdate &
-#   for word in hicolor HighContrast;
-#   do
-#      touch --no-create %{_datarootdir}/icons/${word}
-#      gtk-update-icon-cache %{_datarootdir}/icons/${word} &
-#   done
-
-#} 1>/dev/null 2>&1
-
-## Deploy desktop file
-#desktop-file-install --rebuild-mime-info-cache %{_datarootdir}/%{name}/%{name}.desktop 1>/dev/null 2>&1
+# Deploy desktop files
+desktop-file-install --rebuild-mime-info-cache %{_datadir}/%{name}/app%{_datadir}/applications/%{name}.desktop 1>/dev/null 2>&1 ||:
 
 exit 0
 
 %preun
-# rpm preun 2017-10-24
-# Bup config if different from reference ini
-#{
-#if test "$1" = "0";
-#then
-#   ini_source=%{_datarootdir}/%{name}/inc/GlobalSettings.xml
-#   ini_dest=%{_datarootdir}/%{name}/app%{_datarootdir}/FreeFileSync/GlobalSettings.xml
-#   if ! cmp "${ini_dest}" "${ini_source}";
-#   then
-#      /bin/cp -p "${ini_dest}" "${ini_dest}.$( date "+%Y-%m-%d" ).uninstalled"
-#   fi
-#fi
-#} 1>/dev/null 2>&1
+# rpm preun 2017-12-02
 exit 0
 
 %postun
-# rpm postun 2017-02-13
-#if test "$1" = "0";
-#then
-#{
-#   # total uninstall
+# rpm postun 2017-12-02
+if test "$1" = "0";
+then
+{
+   # total uninstall
 
-#   # Remove desktop file
-#   rm -f %{_datarootdir}/applications/%{name}.desktop
-#   which update-desktop-database && update-desktop-database -q %{_datarootdir}/applications &
+   # Remove desktop files
+   rm -f %{_datadir}/applications/%{name}.desktop
+   which update-desktop-database && update-desktop-database -q %{_datadir}/applications &
 
-#   # Remove icons
-#   which xdg-icon-resource && {
+   # Remove icons
+   rm -f %{_datadir}/pixmaps/%{name}.xpm ||:
 
-#      # Remove default application icons
-#      for theme in hicolor HighConstrast;
-#      do
+   # Remove app symlinks
+   rm -f %{_bindir}/%{name} ||:
 
-#         # Remove scalable application icons
-#         rm -f %{_datarootdir}/icons/${theme}/scalable/apps/freefilesync.svg
-
-#         # Remove size application icons
-#         for size in 64 128;
-#         do
-#            xdg-icon-resource uninstall --context apps --size "${size}" --theme "${theme}" --noupdate freefilesync &
-#         done
-
-#      done
-
-#      # Update icon caches
-#      xdg-icon-resource forceupdate &
-#      for word in hicolor HighContrast;
-#      do
-#         touch --no-create %{_datarootdir}/icons/${word}
-#         gtk-update-icon-cache %{_datarootdir}/icons/${word} &
-#      done
-
-#   }
-#} 1>/dev/null 2>&1
-#fi 
+} 1>/dev/null 2>&1
+fi 
 exit 0
 
 %files
-%dir /usr/share/freefilesync
+%dir /usr/share/veracrypt
+%dir /usr/share/veracrypt/build
+%dir /usr/share/veracrypt/inc
+%doc %attr(444, -, -) /usr/share/doc/veracrypt/REFERENCES.txt
+%doc %attr(444, -, -) /usr/share/doc/veracrypt/README.txt
+/usr/share/doc/veracrypt/version.txt
+/usr/share/veracrypt/doc
+/usr/share/veracrypt/build/get-files
+/usr/share/veracrypt/build/files-for-versioning.txt
+/usr/share/veracrypt/build/get-sources
+/usr/share/veracrypt/build/veracrypt.spec
+/usr/share/veracrypt/build/pack
+/usr/share/veracrypt/app
+/usr/share/veracrypt/inc/sha256sum.txt
+/usr/share/veracrypt/inc/veracrypt_ver.txt
+/usr/share/veracrypt/source
 
 %changelog
-* Fri Dec  1 2017 B Stack <bgstack15@gmail.com> 1.21-0
+* Sat Dec  2 2017 B Stack <bgstack15@gmail.com> 1.22-0
 - Initial rpm built.

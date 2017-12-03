@@ -93,7 +93,7 @@ tar -zcf "${package}-${version}".master.tgz "${package}-${version}"/
 # if you copy-paste this, be sure to define package, version
 cd ~/deb 2>/dev/null || cd ~/rpmbuild/SOURCES
 cd "$( find . -name "*scrub.txt" | grep -iE "${package}-${version}\/" | xargs dirname )"
-/usr/share/bgscripts/scrub.py
+/usr/share/bgscripts/py/scrub.py
 
       ;;
    unknown)

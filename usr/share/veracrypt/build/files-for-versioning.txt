@@ -1,5 +1,4 @@
 doc/README.txt
 doc/version.txt
 inc/veracrypt_ver.txt
-build/localize_git.sh
 build/veracrypt.spec
