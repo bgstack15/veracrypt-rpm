@@ -2,6 +2,7 @@
 # File: get-sources
 # WORKHERE: if all the dls fail, check the usr/share/${package}/source/ dir
 sha256sumfile="${rpmbuilddir}/SOURCES/${package}-${version}/usr/share/${package}/inc/sha256sum.txt"
+localsourcedir="${rpmbuilddir}/SOURCES/${package}-${version}/usr/share/${package}/source"
 
 getsource() {
    # call: getsource http://sourcefile.tar.gz ~/rpmbuilddir/SOURCES/filename.tar.gz
@@ -9,12 +10,13 @@ getsource() {
 
    local sourceurl="${1}"
    local destfile="${2}"
-   local destfileshort=$( echo "${destfile}" | sed -e 's4^.*\/44;' )
+   local destfileshort=$( echo "${destfile}" | sed -e 's/^.*\///;' )
    local goodsha=$( awk "\$2 == \"${destfileshort}\" {print;}" ${sha256sumfile} 2>/dev/null | cut -d' ' -f1 )
 
    touch "${destfile}" 2>/dev/null || { echo "Cannot modify ${destfile}. Run as root, perhaps. Aborted."; exit 1; }
    local attempts=0
    local thesecurlopts=""
+   test -f "${localsourcedir}/${destfileshort}" && cp -pf "${localsourcedir}/${destfileshort}" "${destfile}"
    thissha=$( sha256sum "${destfile}" 2>/dev/null | cut -d' ' -f1 )
    if ! test "${thissha}" = "${goodsha}";
    then
@@ -42,7 +44,7 @@ getsource() {
             6) echo "File failed to download: ${sourceurl}. Aborted." && exit 1;;
             esac
          else
-            # shortcircuit because it the sha256 sum matches      
+            # shortcircuit because it the sha256 sum matches
             break
         fi
         attempts=$(( attempts + 1 ))
@@ -84,6 +86,8 @@ do
    destfile="${rpmbuilddir}/SOURCES/$( echo "${line}" | sed -r -e 's4^.*\/44;' )"
 #"${rpmbuilddir}/SOURCES/${package}-${version}/usr/share/${package}/inc/sha256sum.txt"
    getsource "${line}" "${destfile}"
+
+   # If it is a .patch file, save it to usr/share/${package}/source
    echo "${destfile}" | grep -qiE "\.patch" && /bin/cp -pf "${destfile}" "${rpmbuilddir}/SOURCES/${package}-${version}/usr/share/${package}/source/"
 done < "${getthesefiles1}"
 
