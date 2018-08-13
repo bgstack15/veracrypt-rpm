@@ -1,1 +1,1 @@
-usr/share/doc/veracrypt/README.txt
+#movingtogitlab [https://gitlab.com/bgstack15/veracrypt-rpm](https://gitlab.com/bgstack15/veracrypt-rpm)
